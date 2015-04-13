@@ -105,11 +105,12 @@ int main(int argc, char* argv[])
  
 	// Create a shared material surface used by columns etc.
 	mmat = ChSharedPtr<ChMaterialSurface>(new ChMaterialSurface);
-	mmat->SetFriction(0.6);
+	mmat->SetFriction(0.57735);
 	//mmat->SetSpinningFriction(0.01);
 	//mmat->SetRollingFriction(0.01);
-	mmat->SetCompliance(0.00000002);
-	mmat->SetDampingF(1.5);
+	mmat->SetCompliance(0.00000000597);
+	mmat->SetDampingF(0.00175);
+	mmat->SetRestitution(0.958);
 
 	// Create all the rigid bodies.
 
@@ -147,20 +148,21 @@ int main(int argc, char* argv[])
 	ChSharedPtr<ChLinkLockLock> linkEarthquake(new ChLinkLockLock);
 	linkEarthquake->Initialize(tableBody, floorBody, ChCoordsys<>(ChVector<>(0,0,0)) );
 
-	double time_offset = 2.0; // begin earthquake after 5 s to allow stabilization of blocks after creation.
-	double ampl_factor = 7; // use lower or greater to scale the earthquake.
-	bool   use_barrier = false; // if true, the Barrier data files are used, otherwise the No_Barrier datafiles are used
+//	double time_offset = 2.0; // begin earthquake after 5 s to allow stabilization of blocks after creation.
+//	double ampl_factor = 7; // use lower or greater to scale the earthquake.
+//	bool   use_barrier = false; // if true, the Barrier data files are used, otherwise the No_Barrier datafiles are used
 
 	// Define the horizontal motion, on x:
-//	ChFunction_Sine* mmotion_x = new ChFunction_Sine(0,1.6,0.5); // phase freq ampl, carachteristics of input motion
-	ChFunction* mmotion_x    = create_motion("Time history 10x0.50 Foam (d=6 m)/Barrier_Uh.txt", time_offset, ampl_factor);
-	ChFunction* mmotion_x_NB = create_motion("Time history 10x0.50 Foam (d=6 m)/No_Barrier_Uh.txt", time_offset, ampl_factor);
+	ChFunction_Sine* mmotion_x = new ChFunction_Sine(0,3.8,0.005); // phase freq ampl, carachteristics of input motion
+	linkEarthquake->SetMotion_X(mmotion_x);
+//	ChFunction* mmotion_x    = create_motion("Time history 10x0.50 Foam (d=6 m)/Barrier_Uh.txt", time_offset, ampl_factor);
+//	ChFunction* mmotion_x_NB = create_motion("Time history 10x0.50 Foam (d=6 m)/No_Barrier_Uh.txt", time_offset, ampl_factor);
 
 	// Define the vertical motion, on y:
-	ChFunction* mmotion_y    = create_motion("Time history 10x0.50 Foam (d=6 m)/Barrier_Uv.txt", time_offset, ampl_factor);
-	ChFunction* mmotion_y_NB = create_motion("Time history 10x0.50 Foam (d=6 m)/No_Barrier_Uv.txt", time_offset, ampl_factor);
+//	ChFunction* mmotion_y    = create_motion("Time history 10x0.50 Foam (d=6 m)/Barrier_Uv.txt", time_offset, ampl_factor);
+//	ChFunction* mmotion_y_NB = create_motion("Time history 10x0.50 Foam (d=6 m)/No_Barrier_Uv.txt", time_offset, ampl_factor);
 
-	if (use_barrier)
+/*	if (use_barrier)
 	{
 		linkEarthquake->SetMotion_Z(mmotion_x);
 		linkEarthquake->SetMotion_Y(mmotion_y);
@@ -170,13 +172,15 @@ int main(int argc, char* argv[])
 		linkEarthquake->SetMotion_Z(mmotion_x_NB);
 		linkEarthquake->SetMotion_Y(mmotion_y_NB);
 	}
+*/
 
 	mphysicalSystem.Add(linkEarthquake);
 
 
 	// Pointers to some objects that will be plotted, for future use.
 	ChSharedPtr<ChBody> plot_brick_1;
-	ChSharedPtr<ChBody> plot_brick_2;
+	ChSharedPtr<ChBody> plot_brick_3;
+//	ChSharedPtr<ChBody> plot_brick_2;
 	ChSharedPtr<ChBody> plot_table;
 
 	plot_table = tableBody; // others will be hooked later.
@@ -186,7 +190,7 @@ int main(int argc, char* argv[])
 
 
 //		double spacing = 2.2;
-		double density = 3000;
+		double density = 2670;
 //		int nedges=10;
 
 
@@ -194,15 +198,15 @@ int main(int argc, char* argv[])
 		//to create mattone1
 
 	ChSharedPtr<ChBodyEasyBox> mattone1(new ChBodyEasyBox(
-			0.4, 2 , 0.4, // x y z sizes
+			0.17, 1 , 0.502, // x y z sizes
 			density,
 			true,
 			true));
 
-		ChCoordsys<> cog_mattone1(ChVector<>(0, 1, 0));
+		ChCoordsys<> cog_mattone1(ChVector<>(0, 0.5, 0));
 		mattone1->SetCoord(cog_mattone1);
 		plot_brick_1 = mattone1;
-
+		plot_brick_3 = mattone1;
 		mphysicalSystem.Add(mattone1);
 
 		//create a texture for the mattone1
@@ -211,8 +215,8 @@ int main(int argc, char* argv[])
 		mattone1->AddAsset(mtexturemattone1);
 
 
-		//to create mattone1
-
+		//to create mattone2
+/*
 				ChSharedPtr<ChBodyEasyBox> mattone2(new ChBodyEasyBox(
 			0.4, 2 , 0.4, // x y z sizes
 			density,
@@ -229,7 +233,7 @@ int main(int argc, char* argv[])
 		ChSharedPtr<ChTexture> mtexturemattone2(new ChTexture());
 		mtexturemattone2->SetTextureFilename(GetChronoDataFile("whiteconcrete.jpg"));
 		mattone2->AddAsset(mtexturemattone2);
-
+*/
 	
 	// Use this function for adding a ChIrrNodeAsset to all items
 	// Otherwise use application.AssetBind(myitem); on a per-item basis.
@@ -249,28 +253,29 @@ int main(int argc, char* argv[])
 	mphysicalSystem.SetLcpSolverType(ChSystem::LCP_ITERATIVE_BARZILAIBORWEIN); // slower but more pricise
 	mphysicalSystem.SetIterLCPmaxItersSpeed(80);
 	mphysicalSystem.SetIterLCPmaxItersStab(5);
-	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.05);
-	mphysicalSystem.SetMinBounceSpeed(0.05);
+//	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.05);
+//	mphysicalSystem.SetMinBounceSpeed(0.05);
 	
-	ChCollisionModel::SetDefaultSuggestedEnvelope(0.002);
-	ChCollisionModel::SetDefaultSuggestedMargin  (0.002);
+//	ChCollisionModel::SetDefaultSuggestedEnvelope(0.002);
+//	ChCollisionModel::SetDefaultSuggestedMargin  (0.002);
 
 
 	//mphysicalSystem.SetUseSleeping(true);
 
 	application.SetStepManage(true);
-	application.SetTimestep(0.005);
+	application.SetTimestep(0.0001);
 	application.SetTryRealtime(false);
 
 
 	// Files for output data
 	ChStreamOutAsciiFile data_earthquake_x("data_earthquake_x.dat");
-	ChStreamOutAsciiFile data_earthquake_y("data_earthquake_y.dat");
-	ChStreamOutAsciiFile data_earthquake_x_NB("data_earthquake_x_NB.dat");
-	ChStreamOutAsciiFile data_earthquake_y_NB("data_earthquake_y_NB.dat");
+//	ChStreamOutAsciiFile data_earthquake_y("data_earthquake_y.dat");
+//	ChStreamOutAsciiFile data_earthquake_x_NB("data_earthquake_x_NB.dat");
+//	ChStreamOutAsciiFile data_earthquake_y_NB("data_earthquake_y_NB.dat");
 	ChStreamOutAsciiFile data_table("data_table.dat");
 	ChStreamOutAsciiFile data_brick_1("data_brick_1.dat");
-	ChStreamOutAsciiFile data_brick_2("data_brick_2.dat");
+	ChStreamOutAsciiFile data_brick_3("data_brick_3.dat");
+//	ChStreamOutAsciiFile data_brick_2("data_brick_2.dat");
 
 
 	// 
@@ -289,17 +294,17 @@ int main(int argc, char* argv[])
 		// save data for plotting
 		double time = mphysicalSystem.GetChTime();
 
-		if (time <1.5)
+/*		if (time <1.5)
 			brick_initial_displacement = plot_brick_2->GetPos() - plot_table->GetPos();
 		
 		if (time >1.5)  // save only after tot seconds to avoid plotting initial settlement
-		{
+*/		{
 			data_earthquake_x << time << " " 
 							  << mmotion_x->Get_y(time) << " "
 							  << mmotion_x->Get_y_dx(time) << " "
 							  << mmotion_x->Get_y_dxdx(time) << "\n";
 
-			data_earthquake_y << time << " " 
+/*			data_earthquake_y << time << " " 
 							  << mmotion_y->Get_y(time) << " "
 							  << mmotion_y->Get_y_dx(time) << " "
 							  << mmotion_y->Get_y_dxdx(time) << "\n";
@@ -313,10 +318,10 @@ int main(int argc, char* argv[])
 							  << mmotion_y_NB->Get_y(time) << " "
 							  << mmotion_y_NB->Get_y_dx(time) << " "
 							  << mmotion_y_NB->Get_y_dxdx(time) << "\n";
-							  
+*/							  
 
 			data_table	<< mphysicalSystem.GetChTime() << " " 
-						<< plot_table->GetPos().x -1.05 << " "  // because created at x=4.05, and we want to plot from 0
+						<< plot_table->GetPos().x -4.05 << " "  // because created at x=4.05, and we want to plot from 0
 						<< plot_table->GetPos().y +0.5 << " "
 						<< plot_table->GetPos().z << " "
 						<< plot_table->GetPos_dt().x << " "
@@ -326,23 +331,30 @@ int main(int argc, char* argv[])
 						<< plot_table->GetPos_dtdt().y << " "
 						<< plot_table->GetPos_dtdt().z << "\n";
 
+
 			ChFrameMoving<> rel_motion;
 			plot_table->TransformParentToLocal(plot_brick_1->GetFrame_REF_to_abs(), rel_motion);
 
 			data_brick_1 << mphysicalSystem.GetChTime() << " " 
-						<< rel_motion.GetPos().x - brick_initial_displacement.x << " "  
-						<< rel_motion.GetPos().y - brick_initial_displacement.y << " "
-						<< rel_motion.GetPos().z - brick_initial_displacement.z << " "
-						<< rel_motion.GetPos_dt().x << " "
+						<< rel_motion.GetPos().x +4.05 << "\n";  
+//						<< rel_motion.GetPos().y -0.5 << " "
+//						<< rel_motion.GetPos().z  << "\n";
+/*						<< rel_motion.GetPos_dt().x << " "
 						<< rel_motion.GetPos_dt().y << " "
 						<< rel_motion.GetPos_dt().z << " "
 						<< rel_motion.GetPos_dtdt().x << " "
 						<< rel_motion.GetPos_dtdt().y << " "
 						<< rel_motion.GetPos_dtdt().z << "\n";
+*/
 
 
+			ChFrameMoving<> rel_motion_3;
+			plot_table->TransformParentToLocal(plot_brick_3->GetFrame_REF_to_abs(), rel_motion_3);
 
-			ChFrameMoving<> rel_motion_2;
+			data_brick_3 << mphysicalSystem.GetChTime() << " " 
+						<< rel_motion_3.GetPos().z << "\n";  
+
+/*			ChFrameMoving<> rel_motion_2;
 			plot_table->TransformParentToLocal(plot_brick_2->GetFrame_REF_to_abs(), rel_motion_2);
 
 			data_brick_2 << mphysicalSystem.GetChTime() << " "
@@ -355,14 +367,14 @@ int main(int argc, char* argv[])
 				<< rel_motion_2.GetPos_dtdt().x << " "
 				<< rel_motion_2.GetPos_dtdt().y << " "
 				<< rel_motion_2.GetPos_dtdt().z << "\n";
-			
+*/			
 			// end plotting data logout
 		}
 
 		application.GetVideoDriver()->endScene();
 
 		// Exit simulation if time greater than ..
-		if (mphysicalSystem.GetChTime() > 9) 
+		if (mphysicalSystem.GetChTime() > 7) 
 			break;
 	}
 
