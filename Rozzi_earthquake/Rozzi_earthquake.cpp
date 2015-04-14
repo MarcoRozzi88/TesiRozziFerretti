@@ -109,8 +109,8 @@ int main(int argc, char* argv[])
 	//mmat->SetSpinningFriction(0.01);
 	//mmat->SetRollingFriction(0.01);
 	mmat->SetCompliance(0.00000000597);
-	mmat->SetDampingF(0.00175);
-	mmat->SetRestitution(0.958);
+	mmat->SetDampingF(0.00234);
+//	mmat->SetRestitution(0.973);
 
 	// Create all the rigid bodies.
 
@@ -263,19 +263,19 @@ int main(int argc, char* argv[])
 	//mphysicalSystem.SetUseSleeping(true);
 
 	application.SetStepManage(true);
-	application.SetTimestep(0.0001);
+	application.SetTimestep(0.00001);
 	application.SetTryRealtime(false);
 
 
 	// Files for output data
-	ChStreamOutAsciiFile data_earthquake_x("data_earthquake_x.dat");
-//	ChStreamOutAsciiFile data_earthquake_y("data_earthquake_y.dat");
-//	ChStreamOutAsciiFile data_earthquake_x_NB("data_earthquake_x_NB.dat");
-//	ChStreamOutAsciiFile data_earthquake_y_NB("data_earthquake_y_NB.dat");
-	ChStreamOutAsciiFile data_table("data_table.dat");
-	ChStreamOutAsciiFile data_brick_1("data_brick_1.dat");
-	ChStreamOutAsciiFile data_brick_3("data_brick_3.dat");
-//	ChStreamOutAsciiFile data_brick_2("data_brick_2.dat");
+	ChStreamOutAsciiFile data_earthquake_x("data_earthquake_x.txt");
+//	ChStreamOutAsciiFile data_earthquake_y("data_earthquake_y.txt");
+//	ChStreamOutAsciiFile data_earthquake_x_NB("data_earthquake_x_NB.txt");
+//	ChStreamOutAsciiFile data_earthquake_y_NB("data_earthquake_y_NB.txt");
+	ChStreamOutAsciiFile data_table("data_table.txt");
+	ChStreamOutAsciiFile data_brick_1("data_brick_1.txt");
+	ChStreamOutAsciiFile data_brick_3("data_brick_3.txt");
+//	ChStreamOutAsciiFile data_brick_2("data_brick_2.txt");
 
 
 	// 
