@@ -108,9 +108,9 @@ int main(int argc, char* argv[])
 	mmat->SetFriction(0.57735);
 	//mmat->SetSpinningFriction(0.01);
 	//mmat->SetRollingFriction(0.01);
-	mmat->SetCompliance(0.00000000597);
-	mmat->SetDampingF(0.00234);
-//	mmat->SetRestitution(0.973);
+	mmat->SetCompliance(1000);
+	mmat->SetDampingF(0.00175);
+//	mmat->SetRestitution(0.5);
 
 	// Create all the rigid bodies.
 
@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
 //	bool   use_barrier = false; // if true, the Barrier data files are used, otherwise the No_Barrier datafiles are used
 
 	// Define the horizontal motion, on x:
-	ChFunction_Sine* mmotion_x = new ChFunction_Sine(0,3.8,0.005); // phase freq ampl, carachteristics of input motion
+	ChFunction_Sine* mmotion_x = new ChFunction_Sine(0,0,0); // phase freq ampl, carachteristics of input motion
 	linkEarthquake->SetMotion_X(mmotion_x);
 //	ChFunction* mmotion_x    = create_motion("Time history 10x0.50 Foam (d=6 m)/Barrier_Uh.txt", time_offset, ampl_factor);
 //	ChFunction* mmotion_x_NB = create_motion("Time history 10x0.50 Foam (d=6 m)/No_Barrier_Uh.txt", time_offset, ampl_factor);
@@ -180,6 +180,7 @@ int main(int argc, char* argv[])
 	// Pointers to some objects that will be plotted, for future use.
 	ChSharedPtr<ChBody> plot_brick_1;
 	ChSharedPtr<ChBody> plot_brick_3;
+		ChSharedPtr<ChBody> plot_brick_4;
 //	ChSharedPtr<ChBody> plot_brick_2;
 	ChSharedPtr<ChBody> plot_table;
 
@@ -203,10 +204,11 @@ int main(int argc, char* argv[])
 			true,
 			true));
 
-		ChCoordsys<> cog_mattone1(ChVector<>(0, 0.5, 0));
+		ChCoordsys<> cog_mattone1(ChVector<>(0, 0.5, 0),ChQuaternion<>(cos(3.25*CH_C_DEG_TO_RAD), 0, 0, -sin(3.25*CH_C_DEG_TO_RAD)));
 		mattone1->SetCoord(cog_mattone1);
 		plot_brick_1 = mattone1;
 		plot_brick_3 = mattone1;
+				plot_brick_4 = mattone1;
 		mphysicalSystem.Add(mattone1);
 
 		//create a texture for the mattone1
@@ -253,17 +255,17 @@ int main(int argc, char* argv[])
 	mphysicalSystem.SetLcpSolverType(ChSystem::LCP_ITERATIVE_BARZILAIBORWEIN); // slower but more pricise
 	mphysicalSystem.SetIterLCPmaxItersSpeed(80);
 	mphysicalSystem.SetIterLCPmaxItersStab(5);
-//	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.05);
-//	mphysicalSystem.SetMinBounceSpeed(0.05);
+	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.2);
+	mphysicalSystem.SetMinBounceSpeed(0.1);
 	
-//	ChCollisionModel::SetDefaultSuggestedEnvelope(0.002);
-//	ChCollisionModel::SetDefaultSuggestedMargin  (0.002);
+//	ChCollisionModel::SetDefaultSuggestedEnvelope(0.00001);
+//	ChCollisionModel::SetDefaultSuggestedMargin  (0.005);
 
 
 	//mphysicalSystem.SetUseSleeping(true);
 
 	application.SetStepManage(true);
-	application.SetTimestep(0.00001);
+	application.SetTimestep(0.001);
 	application.SetTryRealtime(false);
 
 
@@ -275,6 +277,7 @@ int main(int argc, char* argv[])
 	ChStreamOutAsciiFile data_table("data_table.txt");
 	ChStreamOutAsciiFile data_brick_1("data_brick_1.txt");
 	ChStreamOutAsciiFile data_brick_3("data_brick_3.txt");
+		ChStreamOutAsciiFile data_brick_4("data_brick_4.txt");
 //	ChStreamOutAsciiFile data_brick_2("data_brick_2.txt");
 
 
@@ -336,7 +339,7 @@ int main(int argc, char* argv[])
 			plot_table->TransformParentToLocal(plot_brick_1->GetFrame_REF_to_abs(), rel_motion);
 
 			data_brick_1 << mphysicalSystem.GetChTime() << " " 
-						<< rel_motion.GetPos().x +4.05 << "\n";  
+						<< rel_motion.GetPos().x +4.05 << "\n";
 //						<< rel_motion.GetPos().y -0.5 << " "
 //						<< rel_motion.GetPos().z  << "\n";
 /*						<< rel_motion.GetPos_dt().x << " "
@@ -351,8 +354,19 @@ int main(int argc, char* argv[])
 			ChFrameMoving<> rel_motion_3;
 			plot_table->TransformParentToLocal(plot_brick_3->GetFrame_REF_to_abs(), rel_motion_3);
 
-			data_brick_3 << mphysicalSystem.GetChTime() << " " 
-						<< rel_motion_3.GetPos().z << "\n";  
+			data_brick_3 << mphysicalSystem.GetChTime() << " "				         
+//						 << rel_motion_3.GetRotAxis() << " "  
+             << rel_motion_3.GetRotAngle() << "\n";
+ 
+
+						ChFrameMoving<> rel_motion_4;
+			plot_table->TransformParentToLocal(plot_brick_4->GetFrame_REF_to_abs(), rel_motion_4);
+
+			data_brick_4 << mphysicalSystem.GetChTime() << " "				         
+						 << rel_motion_4.GetRotAxis().z << "\n";  
+   
+
+
 
 /*			ChFrameMoving<> rel_motion_2;
 			plot_table->TransformParentToLocal(plot_brick_2->GetFrame_REF_to_abs(), rel_motion_2);
