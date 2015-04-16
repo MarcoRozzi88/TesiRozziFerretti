@@ -52,7 +52,7 @@ using namespace io;
 using namespace gui; 
 
 
-ChSharedPtr<ChMaterialSurface> mmat;
+
 
 
  
@@ -104,13 +104,13 @@ int main(int argc, char* argv[])
 	application.AddLightWithShadow(vector3df(1,25,-5), vector3df(0,0,0), 35, 0.2,35, 55, 512, video::SColorf(1,1,1));
  
 	// Create a shared material surface used by columns etc.
-	mmat = ChSharedPtr<ChMaterialSurface>(new ChMaterialSurface);
-	mmat->SetFriction(0.57735);
-	//mmat->SetSpinningFriction(0.01);
-	//mmat->SetRollingFriction(0.01);
-	mmat->SetCompliance(1000);
-	mmat->SetDampingF(0.00175);
-//	mmat->SetRestitution(0.5);
+	ChSharedPtr<ChMaterialSurface> mmat(new ChMaterialSurface);
+	mmat->SetFriction(0.57735f);
+	//mmat->SetSpinningFriction(0.01f);
+	//mmat->SetRollingFriction(0.01f);
+	mmat->SetCompliance(0.00000085f);
+	mmat->SetDampingF(0.00234f);
+//	mmat->SetRestitution(0.5f);
 
 	// Create all the rigid bodies.
 
@@ -180,7 +180,7 @@ int main(int argc, char* argv[])
 	// Pointers to some objects that will be plotted, for future use.
 	ChSharedPtr<ChBody> plot_brick_1;
 	ChSharedPtr<ChBody> plot_brick_3;
-		ChSharedPtr<ChBody> plot_brick_4;
+	ChSharedPtr<ChBody> plot_brick_4;
 //	ChSharedPtr<ChBody> plot_brick_2;
 	ChSharedPtr<ChBody> plot_table;
 
@@ -206,9 +206,10 @@ int main(int argc, char* argv[])
 
 		ChCoordsys<> cog_mattone1(ChVector<>(0, 0.5, 0),ChQuaternion<>(cos(3.25*CH_C_DEG_TO_RAD), 0, 0, -sin(3.25*CH_C_DEG_TO_RAD)));
 		mattone1->SetCoord(cog_mattone1);
+		mattone1->SetMaterialSurface(mmat);
 		plot_brick_1 = mattone1;
 		plot_brick_3 = mattone1;
-				plot_brick_4 = mattone1;
+		plot_brick_4 = mattone1;
 		mphysicalSystem.Add(mattone1);
 
 		//create a texture for the mattone1
@@ -255,11 +256,11 @@ int main(int argc, char* argv[])
 	mphysicalSystem.SetLcpSolverType(ChSystem::LCP_ITERATIVE_BARZILAIBORWEIN); // slower but more pricise
 	mphysicalSystem.SetIterLCPmaxItersSpeed(80);
 	mphysicalSystem.SetIterLCPmaxItersStab(5);
-	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.2);
-	mphysicalSystem.SetMinBounceSpeed(0.1);
+//	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.2);
+//	mphysicalSystem.SetMinBounceSpeed(0.1);
 	
-//	ChCollisionModel::SetDefaultSuggestedEnvelope(0.00001);
-//	ChCollisionModel::SetDefaultSuggestedMargin  (0.005);
+	ChCollisionModel::SetDefaultSuggestedEnvelope(0.1);
+	ChCollisionModel::SetDefaultSuggestedMargin  (0.005);
 
 
 	//mphysicalSystem.SetUseSleeping(true);
