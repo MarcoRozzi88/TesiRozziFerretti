@@ -34,7 +34,7 @@
 #include "assets/ChTexture.h"
 #include "motion_functions/ChFunction_Sine.h"
 #include "unit_IRRLICHT/ChIrrApp.h"
-
+#include "physics/ChMaterialSurface.h"
 
 
 // Use the namespace of Chrono
