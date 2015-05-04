@@ -108,9 +108,13 @@ int main(int argc, char* argv[])
 	mmat->SetFriction(0.57735f);
 	//mmat->SetSpinningFriction(0.01f);
 	//mmat->SetRollingFriction(0.01f);
-	mmat->SetCompliance(0.00000085f);
-	mmat->SetDampingF(0.00234f);
-//	mmat->SetRestitution(0.5f);
+//		mmat->SetComplianceT(0.00001f);
+//	mmat->SetCompliance(0.00001f);
+//	mmat->SetDampingF(0.0001f);
+	mmat->SetRestitution(0.9f);
+
+
+
 
 	// Create all the rigid bodies.
 
@@ -183,28 +187,44 @@ int main(int argc, char* argv[])
 	ChSharedPtr<ChBody> plot_brick_4;
 //	ChSharedPtr<ChBody> plot_brick_2;
 	ChSharedPtr<ChBody> plot_table;
-
+/*
+	ChSharedPtr<ChBody> plot_brick_5;
+	ChSharedPtr<ChBody> plot_brick_6;
+	ChSharedPtr<ChBody> plot_brick_7;
+	ChSharedPtr<ChBody> plot_brick_8;
+	ChSharedPtr<ChBody> plot_brick_9;
+	ChSharedPtr<ChBody> plot_brick_10;
+	ChSharedPtr<ChBody> plot_brick_11;
+	ChSharedPtr<ChBody> plot_brick_12;
+	ChSharedPtr<ChBody> plot_brick_13;
+*/
 	plot_table = tableBody; // others will be hooked later.
 
 
 	// Create the elements of the model
 
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	// BLOCCO SINGOLO
+
 //		double spacing = 2.2;
 		double density = 2670;
 //		int nedges=10;
+        double dimx = 0.17;
+		double dimy = 1;
+		double dimz = 0.502;
 
 
-
-		//to create mattone1
+		
 
 	ChSharedPtr<ChBodyEasyBox> mattone1(new ChBodyEasyBox(
-			0.17, 1 , 0.502, // x y z sizes
+			dimx, dimy , dimz, // x y z sizes
 			density,
 			true,
 			true));
 
-		ChCoordsys<> cog_mattone1(ChVector<>(0, 0.5, 0),ChQuaternion<>(cos(3.25*CH_C_DEG_TO_RAD), 0, 0, -sin(3.25*CH_C_DEG_TO_RAD)));
+		ChCoordsys<> cog_mattone1(ChVector<>(0, (dimy/2), 0),ChQuaternion<>(cos(2*CH_C_DEG_TO_RAD), 0, 0, sin(2*CH_C_DEG_TO_RAD)));
 		mattone1->SetCoord(cog_mattone1);
 		mattone1->SetMaterialSurface(mmat);
 		plot_brick_1 = mattone1;
@@ -237,7 +257,142 @@ int main(int argc, char* argv[])
 		mtexturemattone2->SetTextureFilename(GetChronoDataFile("whiteconcrete.jpg"));
 		mattone2->AddAsset(mtexturemattone2);
 */
-	
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+/*
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			// BLOCCHI IMPILATI
+
+//		double spacing = 2.2;
+		double density = 2670;
+//		int nedges=10;
+        double dimx = 0.17;
+		double dimy = 1;
+		double dimz = 0.502;
+
+
+	for (int ai = 0; ai < 4; ai++)  // N. of walls
+	{ 		
+
+	ChSharedPtr<ChBodyEasyBox> mattone1(new ChBodyEasyBox(
+			dimx, dimy , dimz, // x y z sizes
+			density,
+			true,
+			true));
+
+		ChCoordsys<> cog_mattone1(ChVector<>(0, (dimy/2+dimy*ai), 0),ChQuaternion<>(0, 0, 0, 0));
+		mattone1->SetCoord(cog_mattone1);
+		mattone1->SetMaterialSurface(mmat);
+		
+		mphysicalSystem.Add(mattone1);
+
+		//create a texture for the mattone1
+		ChSharedPtr<ChTexture> mtexturemattone1(new ChTexture());
+		mtexturemattone1->SetTextureFilename(GetChronoDataFile("whiteconcrete.jpg"));
+		mattone1->AddAsset(mtexturemattone1);
+
+			if (ai == 3)
+		{
+
+		plot_brick_1 = mattone1;
+		plot_brick_3 = mattone1;
+		plot_brick_4 = mattone1;
+			}
+
+	}
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*/
+
+/*
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	// TRILITE
+
+
+
+//		double spacing = 2.2;
+		double density = 2670;
+//		int nedges=10;
+ 
+		//COLONNE
+
+		double dimx = 0.22;
+		double dimy = 0.8;
+		double dimz = 0.65;
+
+		//colonna1
+
+	ChSharedPtr<ChBodyEasyBox> colonna1(new ChBodyEasyBox(
+			dimx, dimy , dimz, // x y z sizes
+			density,
+			true,
+			true));
+
+		ChCoordsys<> cog_colonna1(ChVector<>((dimx/2), (dimy/2), (dimz/2)),ChQuaternion<>(0, 0, 0, 0));
+		colonna1->SetCoord(cog_colonna1);
+		colonna1->SetMaterialSurface(mmat);
+		plot_brick_5 = colonna1;
+		plot_brick_6 = colonna1;
+		plot_brick_7 = colonna1;
+		mphysicalSystem.Add(colonna1);
+
+		//create a texture for the colonna1
+		ChSharedPtr<ChTexture> mtexturecolonna1(new ChTexture());
+		mtexturecolonna1->SetTextureFilename(GetChronoDataFile("whiteconcrete.jpg"));
+		colonna1->AddAsset(mtexturecolonna1);
+
+
+		//colonna2
+
+ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
+			dimx, dimy , dimz, // x y z sizes
+			density,
+			true,
+			true));
+
+		ChCoordsys<> cog_colonna2(ChVector<>((1.02-(dimx/2)), (dimy/2), (dimz/2)),ChQuaternion<>(0, 0, 0, 0));
+		colonna2->SetCoord(cog_colonna2);
+		colonna2->SetMaterialSurface(mmat);
+		plot_brick_8 = colonna2;
+		plot_brick_9 = colonna2;
+		plot_brick_10 = colonna2;
+		mphysicalSystem.Add(colonna2);
+
+		//create a texture for the colonna2
+		ChSharedPtr<ChTexture> mtexturecolonna2(new ChTexture());
+		mtexturecolonna2->SetTextureFilename(GetChronoDataFile("whiteconcrete.jpg"));
+		colonna2->AddAsset(mtexturecolonna2);
+
+		//TRAVE
+
+		double travex = 1.02 ;
+		double travey = 0.15 ;
+		double travez = 0.65 ;
+
+     ChSharedPtr<ChBodyEasyBox> trave(new ChBodyEasyBox(
+			travex, travey , travez, // x y z sizes
+			density,
+			true,
+			true));
+
+		ChCoordsys<> cog_trave(ChVector<>((travex/2), (dimy+(travey/2)), (travez/2)),ChQuaternion<>(0, 0, 0, 0));
+		trave->SetCoord(cog_trave);
+		trave->SetMaterialSurface(mmat);
+		plot_brick_11 = trave;
+		plot_brick_12 = trave;
+		plot_brick_13 = trave;
+		mphysicalSystem.Add(trave);
+
+		//create a texture for the trave
+		ChSharedPtr<ChTexture> mtexturetrave(new ChTexture());
+		mtexturetrave->SetTextureFilename(GetChronoDataFile("whiteconcrete.jpg"));
+		trave->AddAsset(mtexturetrave);
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*/
+
+
 	// Use this function for adding a ChIrrNodeAsset to all items
 	// Otherwise use application.AssetBind(myitem); on a per-item basis.
 	application.AssetBindAll();
@@ -253,20 +408,20 @@ int main(int argc, char* argv[])
 
 	// Modify some setting of the physical system for the simulation, if you want
 	//mphysicalSystem.SetLcpSolverType(ChSystem::LCP_ITERATIVE_SOR);
-	mphysicalSystem.SetLcpSolverType(ChSystem::LCP_ITERATIVE_BARZILAIBORWEIN); // slower but more pricise
+	mphysicalSystem.SetLcpSolverType(ChSystem::LCP_ITERATIVE_SOR_MULTITHREAD); // MULTIPROCESSOR
 	mphysicalSystem.SetIterLCPmaxItersSpeed(80);
 	mphysicalSystem.SetIterLCPmaxItersStab(5);
-//	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.2);
-//	mphysicalSystem.SetMinBounceSpeed(0.1);
+	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.2);
+	mphysicalSystem.SetMinBounceSpeed(0.1);
 	
-	ChCollisionModel::SetDefaultSuggestedEnvelope(0.1);
+	ChCollisionModel::SetDefaultSuggestedEnvelope(0.00);
 	ChCollisionModel::SetDefaultSuggestedMargin  (0.005);
 
 
 	//mphysicalSystem.SetUseSleeping(true);
 
 	application.SetStepManage(true);
-	application.SetTimestep(0.001);
+	application.SetTimestep(0.0001);
 	application.SetTryRealtime(false);
 
 
@@ -278,7 +433,19 @@ int main(int argc, char* argv[])
 	ChStreamOutAsciiFile data_table("data_table.txt");
 	ChStreamOutAsciiFile data_brick_1("data_brick_1.txt");
 	ChStreamOutAsciiFile data_brick_3("data_brick_3.txt");
-		ChStreamOutAsciiFile data_brick_4("data_brick_4.txt");
+	ChStreamOutAsciiFile data_brick_4("data_brick_4.txt");
+/*
+	ChStreamOutAsciiFile data_brick_5("data_brick_5.txt");
+	ChStreamOutAsciiFile data_brick_6("data_brick_6.txt");
+	ChStreamOutAsciiFile data_brick_7("data_brick_7.txt");
+	ChStreamOutAsciiFile data_brick_8("data_brick_8.txt");
+	ChStreamOutAsciiFile data_brick_9("data_brick_9.txt");
+	ChStreamOutAsciiFile data_brick_10("data_brick_10.txt");
+	ChStreamOutAsciiFile data_brick_11("data_brick_11.txt");
+	ChStreamOutAsciiFile data_brick_12("data_brick_12.txt");
+	ChStreamOutAsciiFile data_brick_13("data_brick_13.txt");
+	*/
+
 //	ChStreamOutAsciiFile data_brick_2("data_brick_2.txt");
 
 
@@ -340,8 +507,8 @@ int main(int argc, char* argv[])
 			plot_table->TransformParentToLocal(plot_brick_1->GetFrame_REF_to_abs(), rel_motion);
 
 			data_brick_1 << mphysicalSystem.GetChTime() << " " 
-						<< rel_motion.GetPos().x +4.05 << "\n";
-//						<< rel_motion.GetPos().y -0.5 << " "
+						<< rel_motion.GetPos().x +4.05 << " "
+						<< rel_motion.GetPos().y -0.5 << "\n";
 //						<< rel_motion.GetPos().z  << "\n";
 /*						<< rel_motion.GetPos_dt().x << " "
 						<< rel_motion.GetPos_dt().y << " "
@@ -365,8 +532,105 @@ int main(int argc, char* argv[])
 
 			data_brick_4 << mphysicalSystem.GetChTime() << " "				         
 						 << rel_motion_4.GetRotAxis().z << "\n";  
-   
+  
+			
+/*
+// OUTPUT TRILITE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+//colonna1
+						ChFrameMoving<> rel_motion_5;
+			plot_table->TransformParentToLocal(plot_brick_5->GetFrame_REF_to_abs(), rel_motion_5);
+
+			data_brick_5 << mphysicalSystem.GetChTime() << " " 
+						<< rel_motion_5.GetPos().x +4.05 << " "
+						<< rel_motion_5.GetPos().y -0.5 << "\n";
+//						<< rel_motion_5.GetPos().z  << "\n";
+//						<< rel_motion_5.GetPos_dt().x << " "
+//						<< rel_motion_5.GetPos_dt().y << " "
+//						<< rel_motion_5.GetPos_dt().z << " "
+//						<< rel_motion_5.GetPos_dtdt().x << " "
+//						<< rel_motion_5.GetPos_dtdt().y << " "
+//						<< rel_motion_5.GetPos_dtdt().z << "\n";
+
+
+						ChFrameMoving<> rel_motion_6;
+			plot_table->TransformParentToLocal(plot_brick_6->GetFrame_REF_to_abs(), rel_motion_6);
+
+			data_brick_6 << mphysicalSystem.GetChTime() << " "				         
+//						 << rel_motion_6.GetRotAxis() << " "  
+             << rel_motion_6.GetRotAngle() << "\n";
+ 
+
+						ChFrameMoving<> rel_motion_7;
+			plot_table->TransformParentToLocal(plot_brick_7->GetFrame_REF_to_abs(), rel_motion_7);
+
+			data_brick_7 << mphysicalSystem.GetChTime() << " "				         
+						 << rel_motion_7.GetRotAxis().z << "\n"; 
+
+//colonna2
+
+									ChFrameMoving<> rel_motion_8;
+			plot_table->TransformParentToLocal(plot_brick_8->GetFrame_REF_to_abs(), rel_motion_8);
+
+			data_brick_8 << mphysicalSystem.GetChTime() << " " 
+						<< rel_motion_8.GetPos().x +4.05 << " "
+						<< rel_motion_8.GetPos().y -0.5 << "\n";
+//						<< rel_motion_8.GetPos().z  << "\n";
+//						<< rel_motion_8.GetPos_dt().x << " "
+	//					<< rel_motion_8.GetPos_dt().y << " "
+	//					<< rel_motion_8.GetPos_dt().z << " "
+	//					<< rel_motion_8.GetPos_dtdt().x << " "
+	//					<< rel_motion_8.GetPos_dtdt().y << " "
+	//					<< rel_motion_8.GetPos_dtdt().z << "\n";
+
+
+						ChFrameMoving<> rel_motion_9;
+			plot_table->TransformParentToLocal(plot_brick_9->GetFrame_REF_to_abs(), rel_motion_9);
+
+			data_brick_9 << mphysicalSystem.GetChTime() << " "				         
+//						 << rel_motion_9.GetRotAxis() << " "  
+             << rel_motion_9.GetRotAngle() << "\n";
+ 
+
+						ChFrameMoving<> rel_motion_10;
+			plot_table->TransformParentToLocal(plot_brick_10->GetFrame_REF_to_abs(), rel_motion_10);
+
+			data_brick_10 << mphysicalSystem.GetChTime() << " "				         
+						 << rel_motion_10.GetRotAxis().z << "\n"; 
+
+//trave
+
+									ChFrameMoving<> rel_motion_11;
+			plot_table->TransformParentToLocal(plot_brick_11->GetFrame_REF_to_abs(), rel_motion_11);
+
+			data_brick_11 << mphysicalSystem.GetChTime() << " " 
+						<< rel_motion_11.GetPos().x +4.05 << " "
+						<< rel_motion_11.GetPos().y -0.5 << "\n";
+//						<< rel_motion_11.GetPos().z  << "\n";
+//						<< rel_motion_11.GetPos_dt().x << " "
+   //					<< rel_motion_11.GetPos_dt().y << " "
+//						<< rel_motion_11.GetPos_dt().z << " "
+//						<< rel_motion_11.GetPos_dtdt().x << " "
+//						<< rel_motion_11.GetPos_dtdt().y << " "
+//						<< rel_motion_11.GetPos_dtdt().z << "\n";
+
+
+						ChFrameMoving<> rel_motion_12;
+			plot_table->TransformParentToLocal(plot_brick_12->GetFrame_REF_to_abs(), rel_motion_12);
+
+			data_brick_12 << mphysicalSystem.GetChTime() << " "				         
+//						 << rel_motion_12.GetRotAxis() << " "  
+             << rel_motion_12.GetRotAngle() << "\n";
+ 
+
+						ChFrameMoving<> rel_motion_13;
+			plot_table->TransformParentToLocal(plot_brick_13->GetFrame_REF_to_abs(), rel_motion_13);
+
+			data_brick_13 << mphysicalSystem.GetChTime() << " "				         
+						 << rel_motion_13.GetRotAxis().z << "\n"; 
+
+//   FINE OUTPUT TRILITE +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			*/
 
 
 /*			ChFrameMoving<> rel_motion_2;
