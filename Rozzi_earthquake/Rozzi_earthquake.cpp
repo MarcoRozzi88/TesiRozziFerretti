@@ -108,10 +108,10 @@ int main(int argc, char* argv[])
 	mmat->SetFriction(0.57735f);
 	//mmat->SetSpinningFriction(0.01f);
 	//mmat->SetRollingFriction(0.01f);
-//		mmat->SetComplianceT(0.00001f);
-//	mmat->SetCompliance(0.00001f);
-//	mmat->SetDampingF(0.0001f);
-	mmat->SetRestitution(0.9f);
+		mmat->SetCompliance(0.0000006f);
+		mmat->SetComplianceT(0.0000006f);
+	mmat->SetDampingF(0.00176f);
+//	mmat->SetRestitution(0.6f);
 
 
 
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
 	// Create the table that is subject to earthquake
 
 	ChSharedPtr<ChBodyEasyBox> tableBody(new ChBodyEasyBox( 17,1,15,  3000,	true, true));
-	tableBody->SetPos( ChVector<>(4.05,-0.5,0) );
+	tableBody->SetPos( ChVector<>(0,-0.5,0) );
 
 	mphysicalSystem.Add(tableBody);
 
@@ -185,6 +185,7 @@ int main(int argc, char* argv[])
 	ChSharedPtr<ChBody> plot_brick_1;
 	ChSharedPtr<ChBody> plot_brick_3;
 	ChSharedPtr<ChBody> plot_brick_4;
+
 //	ChSharedPtr<ChBody> plot_brick_2;
 	ChSharedPtr<ChBody> plot_table;
 /*
@@ -224,12 +225,13 @@ int main(int argc, char* argv[])
 			true,
 			true));
 
-		ChCoordsys<> cog_mattone1(ChVector<>(0, (dimy/2), 0),ChQuaternion<>(cos(2*CH_C_DEG_TO_RAD), 0, 0, sin(2*CH_C_DEG_TO_RAD)));
+		ChCoordsys<> cog_mattone1(ChVector<>(0, (dimy/2),0), ChQuaternion<>(cos(2*CH_C_DEG_TO_RAD),0,0,sin(2*CH_C_DEG_TO_RAD)));
 		mattone1->SetCoord(cog_mattone1);
 		mattone1->SetMaterialSurface(mmat);
 		plot_brick_1 = mattone1;
 		plot_brick_3 = mattone1;
 		plot_brick_4 = mattone1;
+
 		mphysicalSystem.Add(mattone1);
 
 		//create a texture for the mattone1
@@ -407,12 +409,13 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 
 
 	// Modify some setting of the physical system for the simulation, if you want
-	//mphysicalSystem.SetLcpSolverType(ChSystem::LCP_ITERATIVE_SOR);
-	mphysicalSystem.SetLcpSolverType(ChSystem::LCP_ITERATIVE_SOR_MULTITHREAD); // MULTIPROCESSOR
+//	mphysicalSystem.SetLcpSolverType(ChSystem::LCP_ITERATIVE_SOR);
+	mphysicalSystem.SetLcpSolverType(ChSystem::LCP_ITERATIVE_BARZILAIBORWEIN); // slower but more pricise
+//	mphysicalSystem.SetLcpSolverType(ChSystem::LCP_ITERATIVE_SOR_MULTITHREAD); // VELOCE
 	mphysicalSystem.SetIterLCPmaxItersSpeed(80);
 	mphysicalSystem.SetIterLCPmaxItersStab(5);
-	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.2);
-	mphysicalSystem.SetMinBounceSpeed(0.1);
+//	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.8);
+//	mphysicalSystem.SetMinBounceSpeed(0.001);
 	
 	ChCollisionModel::SetDefaultSuggestedEnvelope(0.00);
 	ChCollisionModel::SetDefaultSuggestedMargin  (0.005);
@@ -434,6 +437,7 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 	ChStreamOutAsciiFile data_brick_1("data_brick_1.txt");
 	ChStreamOutAsciiFile data_brick_3("data_brick_3.txt");
 	ChStreamOutAsciiFile data_brick_4("data_brick_4.txt");
+
 /*
 	ChStreamOutAsciiFile data_brick_5("data_brick_5.txt");
 	ChStreamOutAsciiFile data_brick_6("data_brick_6.txt");
@@ -492,8 +496,8 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 */							  
 
 			data_table	<< mphysicalSystem.GetChTime() << " " 
-						<< plot_table->GetPos().x -4.05 << " "  // because created at x=4.05, and we want to plot from 0
-						<< plot_table->GetPos().y +0.5 << " "
+						<< plot_table->GetPos().x -4.05 << "\n";  // because created at x=4.05, and we want to plot from 0
+/*						<< plot_table->GetPos().y +0.5 << " "
 						<< plot_table->GetPos().z << " "
 						<< plot_table->GetPos_dt().x << " "
 						<< plot_table->GetPos_dt().y << " "
@@ -501,13 +505,13 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 						<< plot_table->GetPos_dtdt().x << " "
 						<< plot_table->GetPos_dtdt().y << " "
 						<< plot_table->GetPos_dtdt().z << "\n";
-
+*/
 
 			ChFrameMoving<> rel_motion;
 			plot_table->TransformParentToLocal(plot_brick_1->GetFrame_REF_to_abs(), rel_motion);
 
 			data_brick_1 << mphysicalSystem.GetChTime() << " " 
-						<< rel_motion.GetPos().x +4.05 << " "
+						<< rel_motion.GetPos().x  << " "
 						<< rel_motion.GetPos().y -0.5 << "\n";
 //						<< rel_motion.GetPos().z  << "\n";
 /*						<< rel_motion.GetPos_dt().x << " "
@@ -523,17 +527,18 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 			plot_table->TransformParentToLocal(plot_brick_3->GetFrame_REF_to_abs(), rel_motion_3);
 
 			data_brick_3 << mphysicalSystem.GetChTime() << " "				         
-//						 << rel_motion_3.GetRotAxis() << " "  
+						 << rel_motion_3.GetRotAxis().z << " "  
              << rel_motion_3.GetRotAngle() << "\n";
- 
 
-						ChFrameMoving<> rel_motion_4;
+
+
+/*						ChFrameMoving<> rel_motion_4;
 			plot_table->TransformParentToLocal(plot_brick_4->GetFrame_REF_to_abs(), rel_motion_4);
 
 			data_brick_4 << mphysicalSystem.GetChTime() << " "				         
-						 << rel_motion_4.GetRotAxis().z << "\n";  
-  
-			
+           << rel_motion_4.GetRotAxis().z << "\n";
+*/
+
 /*
 // OUTPUT TRILITE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -653,7 +658,7 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 		application.GetVideoDriver()->endScene();
 
 		// Exit simulation if time greater than ..
-		if (mphysicalSystem.GetChTime() > 7) 
+		if (mphysicalSystem.GetChTime() > 4) 
 			break;
 	}
 
