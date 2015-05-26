@@ -108,12 +108,10 @@ int main(int argc, char* argv[])
 	mmat->SetFriction(0.57735f);
 	//mmat->SetSpinningFriction(0.01f);
 	//mmat->SetRollingFriction(0.01f);
-	mmat->SetCompliance(0.000004f);
-		mmat->SetComplianceT(0.000004f);
-		mmat->SetDampingF(0.00176f);
-//	mmat->SetRestitution(0.9f);
-
-
+//	mmat->SetComplianceT(0.00000075f);
+//	mmat->SetCompliance(0.00000075f);
+//	mmat->SetDampingF(0.00176f);
+	mmat->SetRestitution(0.914f);
 
 
 	// Create all the rigid bodies.
@@ -137,6 +135,7 @@ int main(int argc, char* argv[])
 
 	ChSharedPtr<ChBodyEasyBox> tableBody(new ChBodyEasyBox( 17,1,15,  3000,	true, true));
 	tableBody->SetPos( ChVector<>(0,-0.5,0) );
+	tableBody->SetMaterialSurface(mmat);
 
 	mphysicalSystem.Add(tableBody);
 
@@ -152,14 +151,33 @@ int main(int argc, char* argv[])
 	ChSharedPtr<ChLinkLockLock> linkEarthquake(new ChLinkLockLock);
 	linkEarthquake->Initialize(tableBody, floorBody, ChCoordsys<>(ChVector<>(0,0,0)) );
 
-//	double time_offset = 0; // begin earthquake after 5 s to allow stabilization of blocks after creation.
+//	double time_offset = 1; // begin earthquake after 5 s to allow stabilization of blocks after creation.
 //	double ampl_factor = 1; // use lower or greater to scale the earthquake.
 //	bool   use_barrier = false; // if true, the Barrier data files are used, otherwise the No_Barrier datafiles are used
 
 	// Define the horizontal motion, on x:
-	ChFunction_Sine* mmotion_x = new ChFunction_Sine(0,0,0); // phase freq ampl, carachteristics of input motion
+	ChFunction_Sine* mmotion_x = new ChFunction_Sine(0,5,0.005); // phase freq ampl, carachteristics of input motion
 	linkEarthquake->SetMotion_X(mmotion_x);
-//	ChFunction* mmotion_x    = create_motion("accelerogrammi/acc1.txt", time_offset, ampl_factor);
+//	ChFunction* mmotion_x    = create_motion("inputsin/input3.txt", time_offset, ampl_factor);
+/*
+	ChSharedPtr<ChFunction> mfun (mmotion_x);
+	mmotion_x->AddRef();
+
+	ChSharedPtr<ChFunction_Integrate> motion_int (new ChFunction_Integrate);
+	motion_int->Set_fa(mfun);
+	motion_int->Set_x_start(0);
+	motion_int->Set_x_end(10);
+	motion_int->Set_num_samples(5000);
+
+	ChSharedPtr<ChFunction_Integrate> motion_intint (new ChFunction_Integrate);
+	motion_intint->Set_fa(motion_int);
+	motion_intint->Set_x_start(0);
+	motion_intint->Set_x_end(10);
+	motion_intint->Set_num_samples(5000);
+
+	linkEarthquake->SetMotion_X(motion_intint.get_ptr());
+*/
+
 //	linkEarthquake->SetMotion_X(mmotion_x);
 //	ChFunction* mmotion_x_NB = create_motion("Time history 10x0.50 Foam (d=6 m)/No_Barrier_Uh.txt", time_offset, ampl_factor);
 
@@ -213,9 +231,9 @@ int main(int argc, char* argv[])
 //		double spacing = 2.2;
 		double density = 2670;
 //		int nedges=10;
-        double dimx = 0.5;
+        double dimx = 0.17;
 		double dimy = 1;
-		double dimz = 0.5;
+		double dimz = 0.502;
 
 
 		
@@ -226,7 +244,8 @@ int main(int argc, char* argv[])
 			true,
 			true));
 
-		ChCoordsys<> cog_mattone1(ChVector<>(0, (dimy/2),0) ,ChQuaternion<>(cos(2*CH_C_DEG_TO_RAD),0,0,sin(2*CH_C_DEG_TO_RAD)));
+		ChCoordsys<> cog_mattone1(ChVector<>(0, ((dimy/2)),0)/*,ChQuaternion<>(cos(2*CH_C_DEG_TO_RAD),0,0,sin(2*CH_C_DEG_TO_RAD))*/);
+		
 		mattone1->SetCoord(cog_mattone1);
 		mattone1->SetMaterialSurface(mmat);
 		plot_brick_1 = mattone1;
@@ -423,8 +442,8 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 //	mphysicalSystem.SetLcpSolverType(ChSystem::LCP_SIMPLEX);
 	mphysicalSystem.SetIterLCPmaxItersSpeed(80);
 	mphysicalSystem.SetIterLCPmaxItersStab(5);
-//	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.8);
-//	mphysicalSystem.SetMinBounceSpeed(0.0001);
+	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.8);
+	mphysicalSystem.SetMinBounceSpeed(0.01);
 	
 	ChCollisionModel::SetDefaultSuggestedEnvelope(0.005);
 	ChCollisionModel::SetDefaultSuggestedMargin  (0.005);
@@ -437,7 +456,7 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 	//mphysicalSystem.SetUseSleeping(true);
 
 	application.SetStepManage(true);
-	application.SetTimestep(0.00001);
+	application.SetTimestep(0.0001);
 	application.SetTryRealtime(false);
 
 
@@ -488,9 +507,9 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 		if (time >1.5)  // save only after tot seconds to avoid plotting initial settlement
 */		{
 			data_earthquake_x << time << " " 
-							  << mmotion_x->Get_y(time) << "\n";
+//							  << mmotion_x->Get_y(time) << "\n";
 //							  << mmotion_x->Get_y_dx(time) << " "
-//							  << mmotion_x->Get_y_dxdx(time) << "\n";
+							  << mmotion_x->Get_y_dxdx(time) << "\n";
 
 /*			data_earthquake_y << time << " " 
 							  << mmotion_y->Get_y(time) << " "
@@ -524,8 +543,8 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 			plot_table->TransformParentToLocal(plot_brick_1->GetFrame_REF_to_abs(), rel_motion);
 
 			data_brick_1 << mphysicalSystem.GetChTime() << " " 
-						<< rel_motion.GetPos().x  << " "
-						<< rel_motion.GetPos().y -0.5 << "\n";
+						<< rel_motion.GetPos().x  << "\n";
+//						<< rel_motion.GetPos().y  << " "
 //						<< rel_motion.GetPos().z  << "\n";
 /*						<< rel_motion.GetPos_dt().x << " "
 						<< rel_motion.GetPos_dt().y << " "
@@ -671,7 +690,7 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 		application.GetVideoDriver()->endScene();
 
 		// Exit simulation if time greater than ..
-		if (mphysicalSystem.GetChTime() > 3) 
+		if (mphysicalSystem.GetChTime() > 13) 
 			break;
 	}
 
