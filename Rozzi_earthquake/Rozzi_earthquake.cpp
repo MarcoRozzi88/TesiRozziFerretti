@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
  
 	// Create a shared material surface used by columns etc.
 	ChSharedPtr<ChMaterialSurface> mmat(new ChMaterialSurface);
-	mmat->SetFriction(0.4f);
+	mmat->SetFriction(0.4);
 //	mmat->SetSpinningFriction(0.1f);
 //	mmat->SetRollingFriction(0.2f);
 //	mmat->SetComplianceT(0.00000075f);
@@ -113,16 +113,17 @@ int main(int argc, char* argv[])
 //	mmat->SetDampingF(0.00176f);
 	mmat->SetRestitution(0.9f);
 
-
-		// Create a shared material surface used by columns etc.
+	// Create a shared material surface used by columns etc.
 	ChSharedPtr<ChMaterialSurface> mmat1(new ChMaterialSurface);
-	mmat->SetFriction(0.4f);
+	mmat->SetFriction(0.4);
 //	mmat->SetSpinningFriction(0.1f);
 //	mmat->SetRollingFriction(0.2f);
 //	mmat->SetComplianceT(0.00000075f);
 //	mmat->SetCompliance(0.00000075f);
 //	mmat->SetDampingF(0.00176f);
 	mmat->SetRestitution(0.9f);
+
+
 
 	// Create all the rigid bodies.
 
@@ -169,7 +170,7 @@ int main(int argc, char* argv[])
 	ChFunction_Sine* mmotion_x = new ChFunction_Sine(0,2,0.25); // phase freq ampl, carachteristics of input motion
 	linkEarthquake->SetMotion_X(mmotion_x);
 
-//	ChFunction* mmotion_x    = create_motion("inputsin/trilite.txt", time_offset, ampl_factor);
+//	ChFunction* mmotion_x    = create_motion("inputsin/colonna2hz.txt", time_offset, ampl_factor);
 //	linkEarthquake->SetMotion_X(mmotion_x);
 
 /*
@@ -238,11 +239,11 @@ int main(int argc, char* argv[])
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-	// BLOCCO SINGOLO
 /*
+	// BLOCCO SINGOLO
+
 //		double spacing = 2.2;
-		double density = 2670;
+		double density = 2028;
 //		int nedges=10;
         double dimx = 0.17;
 		double dimy = 1;
@@ -257,7 +258,7 @@ int main(int argc, char* argv[])
 			true,
 			true));
 
-		ChCoordsys<> cog_mattone1(ChVector<>(0, ((dimy/2)),0),ChQuaternion<>(cos(2*CH_C_DEG_TO_RAD),0,0,sin(2*CH_C_DEG_TO_RAD)));
+		ChCoordsys<> cog_mattone1(ChVector<>(0, ((dimy/2)+0.007),0),ChQuaternion<>(cos(2*CH_C_DEG_TO_RAD),0,0,sin(2*CH_C_DEG_TO_RAD)));
 		
 		mattone1->SetCoord(cog_mattone1);
 		mattone1->SetMaterialSurface(mmat);
@@ -271,8 +272,8 @@ int main(int argc, char* argv[])
 		ChSharedPtr<ChTexture> mtexturemattone1(new ChTexture());
 		mtexturemattone1->SetTextureFilename(GetChronoDataFile("whiteconcrete.jpg"));
 		mattone1->AddAsset(mtexturemattone1);
-
 */
+
 		//to create mattone2
 /*
 				ChSharedPtr<ChBodyEasyBox> mattone2(new ChBodyEasyBox(
@@ -307,14 +308,14 @@ int main(int argc, char* argv[])
 		double dimz = 1;
 /*
 	ChSharedPtr<ChBodyEasyBox> mattone2(new ChBodyEasyBox(
-			dimx, dimy , dimz, // x y z sizes
+			dimx, dimy , dimz , // x y z sizes
 			density,
 			true,
 			true));
 
 		ChCoordsys<> cog_mattone2(ChVector<>(0, (dimy/2), 0));
 		mattone2->SetCoord(cog_mattone2);
-		mattone2->SetMaterialSurface(mmat1);
+		mattone2->SetMaterialSurface(mmat);
 		
 		mphysicalSystem.Add(mattone2);
 
@@ -344,7 +345,7 @@ int main(int argc, char* argv[])
 		mtexturemattone1->SetTextureFilename(GetChronoDataFile("whiteconcrete.jpg"));
 		mattone1->AddAsset(mtexturemattone1);
 
-			if (ai == 2)
+			if (ai == 1)
 		{
 
 		plot_brick_1 = mattone1;
@@ -486,7 +487,7 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 	//mphysicalSystem.SetUseSleeping(true);
 
 	application.SetStepManage(true);
-	application.SetTimestep(0.00001);
+	application.SetTimestep(0.0001);
 	application.SetTryRealtime(false);
 
 
@@ -537,9 +538,9 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 		if (time >1.5)  // save only after tot seconds to avoid plotting initial settlement
 */		{
 			data_earthquake_x << time << " " 
-							  << mmotion_x->Get_y(time) << "\n";
+							  << mmotion_x->Get_y(time) << " "
 //							  << mmotion_x->Get_y_dx(time) << " "
-//							  << mmotion_x->Get_y_dxdx(time) << "\n";
+							  << mmotion_x->Get_y_dxdx(time) << "\n";
 
 /*			data_earthquake_y << time << " " 
 							  << mmotion_y->Get_y(time) << " "
@@ -720,7 +721,7 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 		application.GetVideoDriver()->endScene();
 
 		// Exit simulation if time greater than ..
-		if (mphysicalSystem.GetChTime() > 8) 
+		if (mphysicalSystem.GetChTime() > 10) 
 			break;
 	}
 
