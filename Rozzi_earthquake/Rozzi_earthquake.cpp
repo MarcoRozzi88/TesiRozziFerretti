@@ -105,14 +105,24 @@ int main(int argc, char* argv[])
  
 	// Create a shared material surface used by columns etc.
 	ChSharedPtr<ChMaterialSurface> mmat(new ChMaterialSurface);
-	mmat->SetFriction(0.57735f);
-	//mmat->SetSpinningFriction(0.01f);
-	//mmat->SetRollingFriction(0.01f);
+	mmat->SetFriction(0.4f);
+//	mmat->SetSpinningFriction(0.1f);
+//	mmat->SetRollingFriction(0.2f);
 //	mmat->SetComplianceT(0.00000075f);
 //	mmat->SetCompliance(0.00000075f);
 //	mmat->SetDampingF(0.00176f);
-	mmat->SetRestitution(0.914f);
+	mmat->SetRestitution(0.9f);
 
+
+		// Create a shared material surface used by columns etc.
+	ChSharedPtr<ChMaterialSurface> mmat1(new ChMaterialSurface);
+	mmat->SetFriction(0.4f);
+//	mmat->SetSpinningFriction(0.1f);
+//	mmat->SetRollingFriction(0.2f);
+//	mmat->SetComplianceT(0.00000075f);
+//	mmat->SetCompliance(0.00000075f);
+//	mmat->SetDampingF(0.00176f);
+	mmat->SetRestitution(0.9f);
 
 	// Create all the rigid bodies.
 
@@ -135,7 +145,7 @@ int main(int argc, char* argv[])
 
 	ChSharedPtr<ChBodyEasyBox> tableBody(new ChBodyEasyBox( 17,1,15,  3000,	true, true));
 	tableBody->SetPos( ChVector<>(0,-0.5,0) );
-	tableBody->SetMaterialSurface(mmat);
+	tableBody->SetMaterialSurface(mmat1);
 
 	mphysicalSystem.Add(tableBody);
 
@@ -156,9 +166,12 @@ int main(int argc, char* argv[])
 //	bool   use_barrier = false; // if true, the Barrier data files are used, otherwise the No_Barrier datafiles are used
 
 	// Define the horizontal motion, on x:
-	ChFunction_Sine* mmotion_x = new ChFunction_Sine(0,5,0.005); // phase freq ampl, carachteristics of input motion
+	ChFunction_Sine* mmotion_x = new ChFunction_Sine(0,2,0.25); // phase freq ampl, carachteristics of input motion
 	linkEarthquake->SetMotion_X(mmotion_x);
-//	ChFunction* mmotion_x    = create_motion("inputsin/input3.txt", time_offset, ampl_factor);
+
+//	ChFunction* mmotion_x    = create_motion("inputsin/trilite.txt", time_offset, ampl_factor);
+//	linkEarthquake->SetMotion_X(mmotion_x);
+
 /*
 	ChSharedPtr<ChFunction> mfun (mmotion_x);
 	mmotion_x->AddRef();
@@ -178,7 +191,7 @@ int main(int argc, char* argv[])
 	linkEarthquake->SetMotion_X(motion_intint.get_ptr());
 */
 
-//	linkEarthquake->SetMotion_X(mmotion_x);
+	
 //	ChFunction* mmotion_x_NB = create_motion("Time history 10x0.50 Foam (d=6 m)/No_Barrier_Uh.txt", time_offset, ampl_factor);
 
 	// Define the vertical motion, on y:
@@ -227,7 +240,7 @@ int main(int argc, char* argv[])
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// BLOCCO SINGOLO
-
+/*
 //		double spacing = 2.2;
 		double density = 2670;
 //		int nedges=10;
@@ -244,7 +257,7 @@ int main(int argc, char* argv[])
 			true,
 			true));
 
-		ChCoordsys<> cog_mattone1(ChVector<>(0, ((dimy/2)),0)/*,ChQuaternion<>(cos(2*CH_C_DEG_TO_RAD),0,0,sin(2*CH_C_DEG_TO_RAD))*/);
+		ChCoordsys<> cog_mattone1(ChVector<>(0, ((dimy/2)),0),ChQuaternion<>(cos(2*CH_C_DEG_TO_RAD),0,0,sin(2*CH_C_DEG_TO_RAD)));
 		
 		mattone1->SetCoord(cog_mattone1);
 		mattone1->SetMaterialSurface(mmat);
@@ -259,7 +272,7 @@ int main(int argc, char* argv[])
 		mtexturemattone1->SetTextureFilename(GetChronoDataFile("whiteconcrete.jpg"));
 		mattone1->AddAsset(mtexturemattone1);
 
-
+*/
 		//to create mattone2
 /*
 				ChSharedPtr<ChBodyEasyBox> mattone2(new ChBodyEasyBox(
@@ -282,19 +295,36 @@ int main(int argc, char* argv[])
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-/*
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 			// BLOCCHI IMPILATI
 
 //		double spacing = 2.2;
-		double density = 2670;
+		double density = 2028;
 //		int nedges=10;
-        double dimx = 0.17;
-		double dimy = 1;
-		double dimz = 0.502;
+        double dimx = 1;
+		double dimy = 0.75;
+		double dimz = 1;
+/*
+	ChSharedPtr<ChBodyEasyBox> mattone2(new ChBodyEasyBox(
+			dimx, dimy , dimz, // x y z sizes
+			density,
+			true,
+			true));
 
+		ChCoordsys<> cog_mattone2(ChVector<>(0, (dimy/2), 0));
+		mattone2->SetCoord(cog_mattone2);
+		mattone2->SetMaterialSurface(mmat1);
+		
+		mphysicalSystem.Add(mattone2);
 
-	for (int ai = 0; ai < 4; ai++)  // N. of walls
+		//create a texture for the mattone2
+		ChSharedPtr<ChTexture> mtexturemattone2(new ChTexture());
+		mtexturemattone2->SetTextureFilename(GetChronoDataFile("whiteconcrete.jpg"));
+		mattone2->AddAsset(mtexturemattone2);
+*/
+
+	for (int ai = 0; ai < 8; ai++)  // N. of walls
 	{ 		
 
 	ChSharedPtr<ChBodyEasyBox> mattone1(new ChBodyEasyBox(
@@ -303,7 +333,7 @@ int main(int argc, char* argv[])
 			true,
 			true));
 
-		ChCoordsys<> cog_mattone1(ChVector<>(0, (dimy/2+dimy*ai), 0),ChQuaternion<>(0, 0, 0, 0));
+		ChCoordsys<> cog_mattone1(ChVector<>(0, (dimy/2+dimy*ai), 0));
 		mattone1->SetCoord(cog_mattone1);
 		mattone1->SetMaterialSurface(mmat);
 		
@@ -314,7 +344,7 @@ int main(int argc, char* argv[])
 		mtexturemattone1->SetTextureFilename(GetChronoDataFile("whiteconcrete.jpg"));
 		mattone1->AddAsset(mtexturemattone1);
 
-			if (ai == 3)
+			if (ai == 2)
 		{
 
 		plot_brick_1 = mattone1;
@@ -324,7 +354,7 @@ int main(int argc, char* argv[])
 
 	}
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-*/
+
 
 /*
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -351,7 +381,7 @@ int main(int argc, char* argv[])
 			true,
 			true));
 
-		ChCoordsys<> cog_colonna1(ChVector<>((dimx/2), (dimy/2), (dimz/2)),ChQuaternion<>(0, 0, 0, 0));
+		ChCoordsys<> cog_colonna1(ChVector<>((-0.45+(dimx/2)), (dimy/2), 0));
 		colonna1->SetCoord(cog_colonna1);
 		colonna1->SetMaterialSurface(mmat);
 		plot_brick_5 = colonna1;
@@ -373,7 +403,7 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 			true,
 			true));
 
-		ChCoordsys<> cog_colonna2(ChVector<>((1.02-(dimx/2)), (dimy/2), (dimz/2)),ChQuaternion<>(0, 0, 0, 0));
+		ChCoordsys<> cog_colonna2(ChVector<>((0.45-(dimx/2)), (dimy/2), 0));
 		colonna2->SetCoord(cog_colonna2);
 		colonna2->SetMaterialSurface(mmat);
 		plot_brick_8 = colonna2;
@@ -398,7 +428,7 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 			true,
 			true));
 
-		ChCoordsys<> cog_trave(ChVector<>((travex/2), (dimy+(travey/2)), (travez/2)),ChQuaternion<>(0, 0, 0, 0));
+		ChCoordsys<> cog_trave(ChVector<>(0, (dimy+(travey/2)), 0));
 		trave->SetCoord(cog_trave);
 		trave->SetMaterialSurface(mmat);
 		plot_brick_11 = trave;
@@ -456,7 +486,7 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 	//mphysicalSystem.SetUseSleeping(true);
 
 	application.SetStepManage(true);
-	application.SetTimestep(0.0001);
+	application.SetTimestep(0.00001);
 	application.SetTryRealtime(false);
 
 
@@ -480,7 +510,7 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 	ChStreamOutAsciiFile data_brick_11("data_brick_11.txt");
 	ChStreamOutAsciiFile data_brick_12("data_brick_12.txt");
 	ChStreamOutAsciiFile data_brick_13("data_brick_13.txt");
-	*/
+*/	
 
 //	ChStreamOutAsciiFile data_brick_2("data_brick_2.txt");
 
@@ -507,9 +537,9 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 		if (time >1.5)  // save only after tot seconds to avoid plotting initial settlement
 */		{
 			data_earthquake_x << time << " " 
-//							  << mmotion_x->Get_y(time) << "\n";
+							  << mmotion_x->Get_y(time) << "\n";
 //							  << mmotion_x->Get_y_dx(time) << " "
-							  << mmotion_x->Get_y_dxdx(time) << "\n";
+//							  << mmotion_x->Get_y_dxdx(time) << "\n";
 
 /*			data_earthquake_y << time << " " 
 							  << mmotion_y->Get_y(time) << " "
@@ -579,9 +609,9 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 			plot_table->TransformParentToLocal(plot_brick_5->GetFrame_REF_to_abs(), rel_motion_5);
 
 			data_brick_5 << mphysicalSystem.GetChTime() << " " 
-						<< rel_motion_5.GetPos().x +4.05 << " "
-						<< rel_motion_5.GetPos().y -0.5 << "\n";
-//						<< rel_motion_5.GetPos().z  << "\n";
+						<< rel_motion_5.GetPos().x +0.34 << " "
+//						<< rel_motion_5.GetPos().y -0.4 << "\n";
+						<< rel_motion_5.GetPos().z  << "\n";
 //						<< rel_motion_5.GetPos_dt().x << " "
 //						<< rel_motion_5.GetPos_dt().y << " "
 //						<< rel_motion_5.GetPos_dt().z << " "
@@ -594,15 +624,15 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 			plot_table->TransformParentToLocal(plot_brick_6->GetFrame_REF_to_abs(), rel_motion_6);
 
 			data_brick_6 << mphysicalSystem.GetChTime() << " "				         
-//						 << rel_motion_6.GetRotAxis() << " "  
+						 << rel_motion_6.GetRotAxis().z << " "  
              << rel_motion_6.GetRotAngle() << "\n";
  
 
-						ChFrameMoving<> rel_motion_7;
-			plot_table->TransformParentToLocal(plot_brick_7->GetFrame_REF_to_abs(), rel_motion_7);
+//						ChFrameMoving<> rel_motion_7;
+//			plot_table->TransformParentToLocal(plot_brick_7->GetFrame_REF_to_abs(), rel_motion_7);
 
-			data_brick_7 << mphysicalSystem.GetChTime() << " "				         
-						 << rel_motion_7.GetRotAxis().z << "\n"; 
+//			data_brick_7 << mphysicalSystem.GetChTime() << " "				         
+//						 << rel_motion_7.GetRotAxis().z << "\n"; 
 
 //colonna2
 
@@ -610,9 +640,9 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 			plot_table->TransformParentToLocal(plot_brick_8->GetFrame_REF_to_abs(), rel_motion_8);
 
 			data_brick_8 << mphysicalSystem.GetChTime() << " " 
-						<< rel_motion_8.GetPos().x +4.05 << " "
-						<< rel_motion_8.GetPos().y -0.5 << "\n";
-//						<< rel_motion_8.GetPos().z  << "\n";
+						<< rel_motion_8.GetPos().x -0.34 << " "
+//						<< rel_motion_8.GetPos().y -0.5 << "\n";
+						<< rel_motion_8.GetPos().z  << "\n";
 //						<< rel_motion_8.GetPos_dt().x << " "
 	//					<< rel_motion_8.GetPos_dt().y << " "
 	//					<< rel_motion_8.GetPos_dt().z << " "
@@ -625,15 +655,15 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 			plot_table->TransformParentToLocal(plot_brick_9->GetFrame_REF_to_abs(), rel_motion_9);
 
 			data_brick_9 << mphysicalSystem.GetChTime() << " "				         
-//						 << rel_motion_9.GetRotAxis() << " "  
+						 << rel_motion_9.GetRotAxis().z << " "  
              << rel_motion_9.GetRotAngle() << "\n";
  
 
-						ChFrameMoving<> rel_motion_10;
-			plot_table->TransformParentToLocal(plot_brick_10->GetFrame_REF_to_abs(), rel_motion_10);
+//						ChFrameMoving<> rel_motion_10;
+//			plot_table->TransformParentToLocal(plot_brick_10->GetFrame_REF_to_abs(), rel_motion_10);
 
-			data_brick_10 << mphysicalSystem.GetChTime() << " "				         
-						 << rel_motion_10.GetRotAxis().z << "\n"; 
+//			data_brick_10 << mphysicalSystem.GetChTime() << " "				         
+//						 << rel_motion_10.GetRotAxis().z << "\n"; 
 
 //trave
 
@@ -641,9 +671,9 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 			plot_table->TransformParentToLocal(plot_brick_11->GetFrame_REF_to_abs(), rel_motion_11);
 
 			data_brick_11 << mphysicalSystem.GetChTime() << " " 
-						<< rel_motion_11.GetPos().x +4.05 << " "
-						<< rel_motion_11.GetPos().y -0.5 << "\n";
-//						<< rel_motion_11.GetPos().z  << "\n";
+						<< rel_motion_11.GetPos().x  << " "
+//						<< rel_motion_11.GetPos().y -0.5 << "\n";
+						<< rel_motion_11.GetPos().z  << "\n";
 //						<< rel_motion_11.GetPos_dt().x << " "
    //					<< rel_motion_11.GetPos_dt().y << " "
 //						<< rel_motion_11.GetPos_dt().z << " "
@@ -656,18 +686,18 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 			plot_table->TransformParentToLocal(plot_brick_12->GetFrame_REF_to_abs(), rel_motion_12);
 
 			data_brick_12 << mphysicalSystem.GetChTime() << " "				         
-//						 << rel_motion_12.GetRotAxis() << " "  
+						 << rel_motion_12.GetRotAxis().z << " "  
              << rel_motion_12.GetRotAngle() << "\n";
  
 
-						ChFrameMoving<> rel_motion_13;
-			plot_table->TransformParentToLocal(plot_brick_13->GetFrame_REF_to_abs(), rel_motion_13);
+//						ChFrameMoving<> rel_motion_13;
+//			plot_table->TransformParentToLocal(plot_brick_13->GetFrame_REF_to_abs(), rel_motion_13);
 
-			data_brick_13 << mphysicalSystem.GetChTime() << " "				         
-						 << rel_motion_13.GetRotAxis().z << "\n"; 
+//			data_brick_13 << mphysicalSystem.GetChTime() << " "				         
+//						 << rel_motion_13.GetRotAxis().z << "\n"; 
 
 //   FINE OUTPUT TRILITE +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-			*/
+*/			
 
 
 /*			ChFrameMoving<> rel_motion_2;
@@ -690,7 +720,7 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 		application.GetVideoDriver()->endScene();
 
 		// Exit simulation if time greater than ..
-		if (mphysicalSystem.GetChTime() > 13) 
+		if (mphysicalSystem.GetChTime() > 8) 
 			break;
 	}
 
