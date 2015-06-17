@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
  
 	// Create a shared material surface used by columns etc.
 	ChSharedPtr<ChMaterialSurface> mmat(new ChMaterialSurface);
-	mmat->SetFriction(0.4);
+	mmat->SetFriction(0.8);
 //	mmat->SetSpinningFriction(0.1f);
 //	mmat->SetRollingFriction(0.2f);
 //	mmat->SetComplianceT(0.00000075f);
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 
 	// Create a shared material surface used by columns etc.
 	ChSharedPtr<ChMaterialSurface> mmat1(new ChMaterialSurface);
-	mmat->SetFriction(0.4);
+	mmat->SetFriction(0.8);
 //	mmat->SetSpinningFriction(0.1f);
 //	mmat->SetRollingFriction(0.2f);
 //	mmat->SetComplianceT(0.00000075f);
@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
 //	bool   use_barrier = false; // if true, the Barrier data files are used, otherwise the No_Barrier datafiles are used
 
 	// Define the horizontal motion, on x:
-	ChFunction_Sine* mmotion_x = new ChFunction_Sine(0,2,0.25); // phase freq ampl, carachteristics of input motion
+	ChFunction_Sine* mmotion_x = new ChFunction_Sine(0,5,0.005); // phase freq ampl, carachteristics of input motion
 	linkEarthquake->SetMotion_X(mmotion_x);
 
 //	ChFunction* mmotion_x    = create_motion("inputsin/colonna2hz.txt", time_offset, ampl_factor);
@@ -345,7 +345,7 @@ int main(int argc, char* argv[])
 		mtexturemattone1->SetTextureFilename(GetChronoDataFile("whiteconcrete.jpg"));
 		mattone1->AddAsset(mtexturemattone1);
 
-			if (ai == 1)
+			if (ai == 7)
 		{
 
 		plot_brick_1 = mattone1;
@@ -473,7 +473,7 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 //	mphysicalSystem.SetLcpSolverType(ChSystem::LCP_SIMPLEX);
 	mphysicalSystem.SetIterLCPmaxItersSpeed(80);
 	mphysicalSystem.SetIterLCPmaxItersStab(5);
-	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.8);
+	mphysicalSystem.SetMaxPenetrationRecoverySpeed(0.6);
 	mphysicalSystem.SetMinBounceSpeed(0.01);
 	
 	ChCollisionModel::SetDefaultSuggestedEnvelope(0.005);
@@ -487,7 +487,7 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 	//mphysicalSystem.SetUseSleeping(true);
 
 	application.SetStepManage(true);
-	application.SetTimestep(0.0001);
+	application.SetTimestep(0.001);
 	application.SetTryRealtime(false);
 
 
@@ -521,6 +521,8 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 	//
 	ChVector<> brick_initial_displacement;
 
+		int nstep = 0;
+
 	while (application.GetDevice()->run())
 	{
 		application.GetVideoDriver()->beginScene(true, true, SColor(255, 140, 161, 192));
@@ -531,6 +533,9 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 
 		// save data for plotting
 		double time = mphysicalSystem.GetChTime();
+
+		if((nstep % 1) == 0)  // save each...
+		{
 
 /*		if (time <1.5)
 			brick_initial_displacement = plot_brick_2->GetPos() - plot_table->GetPos();
@@ -717,11 +722,12 @@ ChSharedPtr<ChBodyEasyBox> colonna2(new ChBodyEasyBox(
 */			
 			// end plotting data logout
 		}
+		}
 
 		application.GetVideoDriver()->endScene();
 
 		// Exit simulation if time greater than ..
-		if (mphysicalSystem.GetChTime() > 10) 
+		if (mphysicalSystem.GetChTime() > 20) 
 			break;
 	}
 
